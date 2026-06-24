@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AnalyticsScripts } from "../components/AnalyticsScripts";
 import { WebVitalsHUD } from "../components/dev/WebVitalsHUD";
 import { AuroraModeToggle } from "../components/portfolio/AuroraModeToggle";
 
@@ -106,6 +107,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <AnalyticsScripts />
       </head>
       <body>
         {children}

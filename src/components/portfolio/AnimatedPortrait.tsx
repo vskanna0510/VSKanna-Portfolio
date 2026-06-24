@@ -3,6 +3,13 @@ import { useRef } from "react";
 import portraitUrl from "@/assets/v2-3d-pixar.png";
 import { usePageReady } from "./PageTransition";
 
+const PORTRAIT_MASK: React.CSSProperties = {
+  WebkitMaskImage:
+    "radial-gradient(ellipse 72% 78% at 50% 52%, black 42%, rgba(0,0,0,0.85) 58%, transparent 76%)",
+  maskImage:
+    "radial-gradient(ellipse 72% 78% at 50% 52%, black 42%, rgba(0,0,0,0.85) 58%, transparent 76%)",
+};
+
 export function AnimatedPortrait() {
   const ready = usePageReady();
   const ref = useRef<HTMLDivElement>(null);
@@ -27,42 +34,19 @@ export function AnimatedPortrait() {
       initial={{ opacity: 0, scale: 0.85, y: 16 }}
       animate={ready ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.85, y: 16 }}
       transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
-      className="relative mx-auto h-[300px] w-[300px] animate-float sm:h-[360px] sm:w-[360px] md:h-[400px] md:w-[400px]"
+      className="relative mx-auto h-[300px] w-[300px] overflow-visible animate-float sm:h-[360px] sm:w-[360px] md:h-[400px] md:w-[400px]"
       style={{ perspective: 1100 }}
     >
-      {/* Soft halo blob — appears with page reveal */}
+      {/* Single ambient glow — oversized so blur fades into page background */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.6 }}
-        animate={ready ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
+        initial={{ opacity: 0, scale: 0.85 }}
+        animate={ready ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.85 }}
         transition={{ duration: 1.2, delay: 0.15, ease: "easeOut" }}
-        className="pointer-events-none absolute inset-4 rounded-full"
+        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[135%] w-[135%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           background:
-            "radial-gradient(circle at 35% 35%, rgba(79,70,229,0.45), rgba(249,115,22,0.28) 45%, transparent 70%)",
-          filter: "blur(28px)",
-        }}
-      />
-
-      {/* Slowly-morphing blob behind subject */}
-      <motion.div
-        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[78%] w-[78%] -translate-x-1/2 -translate-y-1/2 animate-blob-morph"
-        style={{
-          background: "linear-gradient(135deg, #4F46E5 0%, #8B7BD8 50%, #F97316 100%)",
-          opacity: 0.22,
-          filter: "blur(18px)",
-        }}
-      />
-
-      {/* Rim glow ring */}
-      <motion.div
-        className="pointer-events-none absolute inset-[6%] rounded-[40%] animate-rim-glow"
-        animate={ready ? { opacity: 0.5 } : { opacity: 0 }}
-        transition={{ duration: 1, delay: 0.4 }}
-        style={{
-          background:
-            "conic-gradient(from 0deg, transparent 0%, rgba(79,70,229,0.35) 25%, transparent 50%, rgba(249,115,22,0.3) 75%, transparent 100%)",
-          maskImage: "radial-gradient(circle, transparent 62%, black 64%, black 70%, transparent 72%)",
-          WebkitMaskImage: "radial-gradient(circle, transparent 62%, black 64%, black 70%, transparent 72%)",
+            "radial-gradient(circle at 42% 38%, rgba(79,70,229,0.22) 0%, rgba(249,115,22,0.12) 38%, transparent 68%)",
+          filter: "blur(48px)",
         }}
       />
 
@@ -76,7 +60,7 @@ export function AnimatedPortrait() {
           animate={ready ? { clipPath: "inset(0 0 0% 0)" } : { clipPath: "inset(0 0 100% 0)" }}
           transition={{ duration: 1.2, ease: [0.65, 0, 0.35, 1], delay: 0.2 }}
           className="absolute inset-0"
-          style={{ transform: "translateZ(40px)" }}
+          style={{ transform: "translateZ(40px)", ...PORTRAIT_MASK }}
         >
           <img
             src={portraitUrl}
@@ -87,17 +71,7 @@ export function AnimatedPortrait() {
             width={400}
             height={400}
             className="h-full w-full animate-portrait-breathe object-contain"
-            style={{
-              mixBlendMode: "screen",
-              filter: "drop-shadow(0 20px 36px rgba(30,27,27,0.2))",
-            }}
-          />
-          <div
-            className="pointer-events-none absolute inset-0 mix-blend-soft-light"
-            style={{
-              background:
-                "radial-gradient(circle at 50% 60%, rgba(79,70,229,0.14), transparent 60%), radial-gradient(circle at 30% 30%, rgba(249,115,22,0.1), transparent 55%)",
-            }}
+            style={{ mixBlendMode: "screen" }}
           />
         </motion.div>
       </motion.div>

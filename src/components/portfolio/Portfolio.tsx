@@ -1,6 +1,6 @@
 import { motion, useScroll, useSpring, useTransform, AnimatePresence, useInView } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   ArrowRight, Brain, Cpu, Database, Download, Github, Linkedin, Mail, MapPin,
   Sparkles, Code2, Layers, Rocket, Terminal as TerminalIcon, Trophy, Zap, Wand2,
@@ -20,6 +20,7 @@ import { AILabControls } from "./AILabControls";
 import { AILabTelemetry } from "./AILabTelemetry";
 import { useWelcomeVoice } from "@/hooks/useWelcomeVoice";
 import { useAuroraMode } from "@/hooks/useAuroraMode";
+import { downloadResume, scrollToSection } from "@/lib/resume";
 
 export const GITHUB_USER = "vskanna0510";
 export const EMAIL = "vskanna2003@gmail.com";
@@ -127,6 +128,13 @@ export function Hero() {
               <ArrowRight className="relative z-10 h-4 w-4 transition-transform group-hover:translate-x-1" />
               <span className="absolute inset-0 -translate-x-full bg-white/30 transition-transform duration-700 group-hover:translate-x-full" />
             </a>
+            <button
+              type="button"
+              onClick={() => downloadResume("hero")}
+              className="glass inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold hover:border-[var(--pink)]/60"
+            >
+              <Download className="h-4 w-4 text-[var(--pink)]" /> Download resume
+            </button>
             <a href="#github" className="glass inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold hover:border-[var(--coral)]/60">
               <Github className="h-4 w-4 text-[var(--coral)]" /> GitHub
             </a>
@@ -612,21 +620,69 @@ export function Achievements() {
 }
 
 /* ---------- Terminal ---------- */
-const COMMANDS: Record<string, string | (() => string)> = {
-  help: "Commands: about, skills, projects, github, contact, resume, achievements, theme, clear",
+type TerminalReply = { output: string; action?: () => void };
+
+const STATIC_COMMANDS: Record<string, string> = {
+  help: "Commands: about, skills, projects, github, open github, play, contact, resume, achievements, theme, clear",
   about: "I'm V S Kanna — M.E. CSE at SSN. Full-stack and AI engineer. Open to backend and full-stack roles.",
   skills: "Languages, frontend, backend, databases, AI/ML, DevOps — see the Skills section.",
-  projects: "Deepfake detection, mental-health risk model, ERP at FYXIN — see the Projects section.",
-  github: `github.com/${GITHUB_USER} — live stats in the GitHub section`,
   contact: `${EMAIL} · ${PHONE} · ${LINKEDIN}`,
-  resume: "Downloading VSKanna_Resume.pdf ... (not really, but nice try)",
   achievements: "IIT Madras Top 8 · IEEE Madras Top 9 · SIH 2nd Runner-Up · 1000+ SkillRack · 300+ LeetCode",
   theme: "Colors: coral, amber, and pink.",
   "sudo hire-me": `Nice try. Email me at ${EMAIL} instead.`,
   future: "The future is unevenly distributed — Gibson, more or less.",
 };
 
+function resolveTerminalCommand(
+  raw: string,
+  navigate: ReturnType<typeof useNavigate>,
+  isHome: boolean,
+): TerminalReply {
+  const cmd = raw.trim().toLowerCase().replace(/\s+/g, " ");
+
+  if (cmd === "projects") {
+    return {
+      output: isHome ? "Scrolling to projects…" : "Opening projects page…",
+      action: () => {
+        if (isHome && scrollToSection("projects")) return;
+        navigate({ to: "/projects" });
+      },
+    };
+  }
+
+  if (cmd === "github" || cmd === "open github") {
+    return {
+      output: isHome ? "Scrolling to GitHub…" : "Opening GitHub page…",
+      action: () => {
+        if (isHome && scrollToSection("github")) return;
+        navigate({ to: "/github" });
+      },
+    };
+  }
+
+  if (cmd === "play") {
+    return {
+      output: "Opening arcade…",
+      action: () => navigate({ to: "/arcade" }),
+    };
+  }
+
+  if (cmd === "resume") {
+    return {
+      output: "Downloading VSKanna_Resume.pdf…",
+      action: () => downloadResume("terminal"),
+    };
+  }
+
+  const staticReply = STATIC_COMMANDS[cmd];
+  if (staticReply) return { output: staticReply };
+
+  return { output: `command not found: ${cmd}. try \`help\`` };
+}
+
 export function Terminal() {
+  const navigate = useNavigate();
+  const isHome = useRouterState({ select: (s) => s.location.pathname === "/" });
   const [lines, setLines] = useState<{ t: "in" | "out"; v: string }[]>([
     { t: "out", v: "Welcome — type help to see commands." },
   ]);
@@ -651,15 +707,15 @@ export function Terminal() {
     const cmd = raw.trim().toLowerCase();
     if (!cmd) return;
     if (cmd === "clear") { setLines([]); return; }
-    const out = COMMANDS[cmd];
-    const v = typeof out === "function" ? out() : out ?? `command not found: ${cmd}. try \`help\``;
-    setLines((l) => [...l, { t: "in", v: raw }, { t: "out", v }]);
+    const { output, action } = resolveTerminalCommand(raw, navigate, isHome);
+    setLines((l) => [...l, { t: "in", v: raw }, { t: "out", v: output }]);
+    action?.();
   };
 
   return (
     <section id="terminal" className="relative mx-auto max-w-5xl px-6 py-32">
       <SectionHeader kicker="Terminal" title={<>A small command line</>}
-        sub="Try: help · about · projects · github · sudo hire-me · future" />
+        sub="Try: help · projects · open github · play · resume · sudo hire-me" />
       <div className="glass-frost overflow-hidden rounded-2xl border border-white/10 font-mono text-sm">
         <div className="flex items-center gap-2 border-b border-white/10 bg-white/[0.03] px-4 py-2">
           <span className="h-3 w-3 rounded-full bg-red-500/80" />
