@@ -1,0 +1,6 @@
+{
+  "updatedAt": null,
+  "note": "Run npm run lighthouse:update-baseline after first successful audit to seed scores.",
+  "mobile": { "lcp": null, "tbt": null, "cls": null },
+  "desktop": { "lcp": null, "tbt": null, "cls": null }
+}

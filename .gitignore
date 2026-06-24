@@ -1,0 +1,66 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.lovable
+.lovable/*
+.lovable/plan.md
+.lovable/project.json   
+.lovable/assets/*
+.lovable/assets/kanna-cutout-pro.png.asset.json
+.lovable/assets/bg-bokeh-warm.jpg
+.lovable/assets/bg-blueprint-soft.jpg
+.lovable/assets/bg-neural-noise.jpg
+.lovable/assets/bg-scene-grid.jpg
+.lovable/assets/bg-scene-bokeh.jpg
+.lovable/assets/bg-scene-blueprint.jpg
+.lovable/assets/bg-scene-neural-noise.jpg
+.lovable/assets/bg-scene-arcade.jpg
+.lovable/assets/bg-scene-arcade.jpg
+.lovable/**
+
+node_modules
+dist
+dist-ssr
+.output
+.vinxi
+.tanstack/**
+.nitro
+*.local
+
+# Wrangler / Cloudflare
+.wrangler/
+.dev.vars
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Lighthouse CI outputs (baseline.json is committed)
+lighthouse/latest.json
+lighthouse/report.md
+lighthouse/*.html
+
+# Local env/config
+.env
+.env.*
+!.env.example
+
+# Playwright MCP local artifacts
+.playwright-mcp/
+
+# Build/cache artifacts
+*.tsbuildinfo
+coverage/
+.vite/
