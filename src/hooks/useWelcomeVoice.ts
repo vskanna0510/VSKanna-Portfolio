@@ -3,8 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 const STORAGE_KEY = "kanna_voice_played_v1";
 const MUTE_KEY = "kanna_voice_muted_v1";
 
-const MESSAGE =
-  "Hi, I'm Kanna. I'm a full-stack and AI engineer. Here's a quick tour of my work.";
+const MESSAGE = "Hi, I'm Kanna. I'm a full-stack and AI engineer. Here's a quick tour of my work.";
 
 function pickVoice(): SpeechSynthesisVoice | null {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return null;

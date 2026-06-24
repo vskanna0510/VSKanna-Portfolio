@@ -43,7 +43,7 @@ export function CustomCursor() {
       const dt = Math.max(1, now - lastPos.current.t);
       const dx = e.clientX - lastPos.current.x;
       const dy = e.clientY - lastPos.current.y;
-      const v = Math.hypot(dx, dy) / dt * 16;
+      const v = (Math.hypot(dx, dy) / dt) * 16;
       velocity.set(v);
       if (v > 1) angle.set((Math.atan2(dy, dx) * 180) / Math.PI);
       lastPos.current = { x: e.clientX, y: e.clientY, t: now };

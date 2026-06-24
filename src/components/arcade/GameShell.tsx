@@ -19,7 +19,15 @@ type Props = {
 };
 
 /** Magnetic, glowing icon button */
-function HudButton({ onClick, children, label }: { onClick: () => void; children: React.ReactNode; label: string }) {
+function HudButton({
+  onClick,
+  children,
+  label,
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+  label: string;
+}) {
   return (
     <motion.button
       onClick={onClick}
@@ -35,24 +43,41 @@ function HudButton({ onClick, children, label }: { onClick: () => void; children
 }
 
 export function GameShell({
-  title, controls, score, best, combo = 0, powerUp = null,
-  onClose, onRestart, paused, setPaused, muted, setMuted, children,
+  title,
+  controls,
+  score,
+  best,
+  combo = 0,
+  powerUp = null,
+  onClose,
+  onRestart,
+  paused,
+  setPaused,
+  muted,
+  setMuted,
+  children,
 }: Props) {
   return (
     <motion.div
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--background)]/80 backdrop-blur-md p-4"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.92, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.92, y: 20 }}
+        initial={{ scale: 0.92, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.92, y: 20 }}
         transition={{ type: "spring", stiffness: 220, damping: 22 }}
         onClick={(e) => e.stopPropagation()}
         className="glass-strong relative w-full max-w-3xl overflow-hidden rounded-3xl p-5"
       >
         <div className="mb-3 flex items-center justify-between gap-2">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--coral)]">arcade · game</div>
+            <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--coral)]">
+              arcade · game
+            </div>
             <h3 className="font-display text-xl font-bold">{title}</h3>
           </div>
           <div className="flex items-center gap-2">
@@ -102,8 +127,12 @@ export function GameShell({
             <HudButton onClick={() => setMuted(!muted)} label={muted ? "Unmute" : "Mute"}>
               {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
             </HudButton>
-            <HudButton onClick={onRestart} label="Restart"><RotateCcw className="h-4 w-4" /></HudButton>
-            <HudButton onClick={onClose} label="Close"><X className="h-4 w-4" /></HudButton>
+            <HudButton onClick={onRestart} label="Restart">
+              <RotateCcw className="h-4 w-4" />
+            </HudButton>
+            <HudButton onClick={onClose} label="Close">
+              <X className="h-4 w-4" />
+            </HudButton>
           </div>
         </div>
 
@@ -128,7 +157,9 @@ export function GameShell({
           <AnimatePresence>
             {paused && (
               <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="absolute inset-0 grid place-items-center bg-[var(--background)]/70 font-display text-3xl font-bold text-foreground"
               >
                 Paused
@@ -148,20 +179,35 @@ export function GameShell({
 /** Tiny Web Audio blip */
 export function useBlip(muted: boolean) {
   const ctxRef = useRef<AudioContext | null>(null);
-  useEffect(() => () => { ctxRef.current?.close(); }, []);
+  useEffect(
+    () => () => {
+      ctxRef.current?.close();
+    },
+    [],
+  );
   return (freq = 440, dur = 0.08, type: OscillatorType = "square") => {
     if (muted) return;
     try {
-      if (!ctxRef.current) ctxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      if (!ctxRef.current) {
+        const w = window as Window & { webkitAudioContext?: typeof AudioContext };
+        const AudioCtx = window.AudioContext ?? w.webkitAudioContext;
+        if (!AudioCtx) return;
+        ctxRef.current = new AudioCtx();
+      }
       const ctx = ctxRef.current!;
       const o = ctx.createOscillator();
       const g = ctx.createGain();
-      o.type = type; o.frequency.value = freq;
+      o.type = type;
+      o.frequency.value = freq;
       g.gain.value = 0.05;
       g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
-      o.connect(g); g.connect(ctx.destination);
-      o.start(); o.stop(ctx.currentTime + dur);
-    } catch {}
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.start();
+      o.stop(ctx.currentTime + dur);
+    } catch {
+      /* audio unavailable */
+    }
   };
 }
 
@@ -169,12 +215,21 @@ export function useBlip(muted: boolean) {
 export function useBestScore(key: string) {
   const [best, setBest] = useState(0);
   useEffect(() => {
-    try { const v = parseInt(localStorage.getItem(key) ?? "0", 10); if (!isNaN(v)) setBest(v); } catch {}
+    try {
+      const v = parseInt(localStorage.getItem(key) ?? "0", 10);
+      if (!isNaN(v)) setBest(v);
+    } catch {
+      /* audio unavailable */
+    }
   }, [key]);
   const update = (n: number) => {
     if (n > best) {
       setBest(n);
-      try { localStorage.setItem(key, String(n)); } catch {}
+      try {
+        localStorage.setItem(key, String(n));
+      } catch {
+        /* audio unavailable */
+      }
     }
   };
   return [best, update] as const;

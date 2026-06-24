@@ -25,7 +25,11 @@ export function SectionDivider() {
           strokeWidth="1.5"
           variants={{
             hidden: { pathLength: 0, opacity: 0 },
-            visible: { pathLength: 1, opacity: 1, transition: { duration: 1.6, ease: "easeInOut" } },
+            visible: {
+              pathLength: 1,
+              opacity: 1,
+              transition: { duration: 1.6, ease: "easeInOut" },
+            },
           }}
         />
         <motion.circle
@@ -36,11 +40,7 @@ export function SectionDivider() {
             visible: { opacity: 1, transition: { delay: 0.6 } },
           }}
         >
-          <animateMotion
-            dur="6s"
-            repeatCount="indefinite"
-            path="M 0 20 Q 300 5 600 20 T 1200 20"
-          />
+          <animateMotion dur="6s" repeatCount="indefinite" path="M 0 20 Q 300 5 600 20 T 1200 20" />
         </motion.circle>
       </motion.svg>
     </div>

@@ -1,6 +1,13 @@
 {
-  "updatedAt": null,
-  "note": "Run npm run lighthouse:update-baseline after first successful audit to seed scores.",
-  "mobile": { "lcp": null, "tbt": null, "cls": null },
-  "desktop": { "lcp": null, "tbt": null, "cls": null }
+  "updatedAt": "2026-06-24T16:10:07.851Z",
+  "mobile": {
+    "lcp": 11594.596374999994,
+    "tbt": 1741.0000000000005,
+    "cls": 0.3790241000708386
+  },
+  "desktop": {
+    "lcp": 13139.886743860661,
+    "tbt": 2604,
+    "cls": 0.3666138100217445
+  }
 }

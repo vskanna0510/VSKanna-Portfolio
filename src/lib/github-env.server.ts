@@ -15,10 +15,7 @@ function readDotEnv(key: string): string | undefined {
       const k = trimmed.slice(0, eq).trim();
       if (k !== key) continue;
       let v = trimmed.slice(eq + 1).trim();
-      if (
-        (v.startsWith('"') && v.endsWith('"')) ||
-        (v.startsWith("'") && v.endsWith("'"))
-      ) {
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
         v = v.slice(1, -1);
       }
       return v;
@@ -33,6 +30,9 @@ function readDotEnv(key: string): string | undefined {
 export function getGithubToken(): string | undefined {
   const fromProcess = process.env.GITHUB_TOKEN?.trim();
   if (fromProcess) return fromProcess;
+
+  // Dev-only fallback: production must use platform env (Vercel/Render secrets).
+  if (process.env.NODE_ENV === "production") return undefined;
 
   const fromFile = readDotEnv("GITHUB_TOKEN")?.trim();
   if (fromFile) {

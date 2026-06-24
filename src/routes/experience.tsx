@@ -11,5 +11,9 @@ export const Route = createFileRoute("/experience")({
       { property: "og:description", content: "Work history and education." },
     ],
   }),
-  component: () => <SectionLayout><Experience /></SectionLayout>,
+  component: () => (
+    <SectionLayout>
+      <Experience />
+    </SectionLayout>
+  ),
 });

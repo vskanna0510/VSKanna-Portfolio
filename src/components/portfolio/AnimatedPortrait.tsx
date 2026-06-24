@@ -24,7 +24,10 @@ export function AnimatedPortrait() {
     mx.set(((e.clientX - r.left) / r.width - 0.5) * 2);
     my.set(((e.clientY - r.top) / r.height - 0.5) * 2);
   };
-  const onLeave = () => { mx.set(0); my.set(0); };
+  const onLeave = () => {
+    mx.set(0);
+    my.set(0);
+  };
 
   return (
     <motion.div
@@ -77,33 +80,34 @@ export function AnimatedPortrait() {
       </motion.div>
 
       {/* Floating particles around portrait */}
-      {ready && Array.from({ length: 14 }).map((_, i) => {
-        const angle = (i / 14) * Math.PI * 2;
-        const r = 130 + (i % 3) * 22;
-        const dx = Math.cos(angle) * r;
-        const dy = Math.sin(angle) * r;
-        const color = i % 3 === 0 ? "#4F46E5" : i % 3 === 1 ? "#F97316" : "#8B7BD8";
-        return (
-          <motion.span
-            key={i}
-            className="pointer-events-none absolute left-1/2 top-1/2 h-1.5 w-1.5 rounded-full"
-            style={{ background: color, boxShadow: `0 0 8px ${color}` }}
-            initial={{ x: 0, y: 0, opacity: 0 }}
-            animate={{
-              x: [dx * 0.7, dx, dx * 0.7],
-              y: [dy * 0.7, dy, dy * 0.7],
-              opacity: [0, 0.9, 0.4, 0.9, 0],
-              scale: [0.6, 1.1, 0.6],
-            }}
-            transition={{
-              duration: 6 + (i % 4),
-              repeat: Infinity,
-              delay: 1 + i * 0.15,
-              ease: "easeInOut",
-            }}
-          />
-        );
-      })}
+      {ready &&
+        Array.from({ length: 14 }).map((_, i) => {
+          const angle = (i / 14) * Math.PI * 2;
+          const r = 130 + (i % 3) * 22;
+          const dx = Math.cos(angle) * r;
+          const dy = Math.sin(angle) * r;
+          const color = i % 3 === 0 ? "#4F46E5" : i % 3 === 1 ? "#F97316" : "#8B7BD8";
+          return (
+            <motion.span
+              key={i}
+              className="pointer-events-none absolute left-1/2 top-1/2 h-1.5 w-1.5 rounded-full"
+              style={{ background: color, boxShadow: `0 0 8px ${color}` }}
+              initial={{ x: 0, y: 0, opacity: 0 }}
+              animate={{
+                x: [dx * 0.7, dx, dx * 0.7],
+                y: [dy * 0.7, dy, dy * 0.7],
+                opacity: [0, 0.9, 0.4, 0.9, 0],
+                scale: [0.6, 1.1, 0.6],
+              }}
+              transition={{
+                duration: 6 + (i % 4),
+                repeat: Infinity,
+                delay: 1 + i * 0.15,
+                ease: "easeInOut",
+              }}
+            />
+          );
+        })}
     </motion.div>
   );
 }

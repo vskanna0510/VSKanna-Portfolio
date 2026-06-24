@@ -15,7 +15,6 @@ import { AnalyticsScripts } from "../components/AnalyticsScripts";
 import { WebVitalsHUD } from "../components/dev/WebVitalsHUD";
 import { AuroraModeToggle } from "../components/portfolio/AuroraModeToggle";
 
-
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -82,10 +81,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "V S Kanna — Portfolio" },
-      { name: "description", content: "Full-stack and AI engineer. Projects, experience, and how to get in touch." },
+      {
+        name: "description",
+        content: "Full-stack and AI engineer. Projects, experience, and how to get in touch.",
+      },
       { name: "author", content: "V S Kanna" },
       { property: "og:title", content: "V S Kanna — Portfolio" },
-      { property: "og:description", content: "Full-stack and AI engineer. Projects, experience, and contact." },
+      {
+        property: "og:description",
+        content: "Full-stack and AI engineer. Projects, experience, and contact.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -129,4 +134,3 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-

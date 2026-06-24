@@ -20,10 +20,8 @@ export function AmbientBackdrop({ suppressHeroZone = false }: Props) {
   const y3 = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
 
   const feather: React.CSSProperties = {
-    WebkitMaskImage:
-      "radial-gradient(ellipse at center, black 0%, black 28%, transparent 78%)",
-    maskImage:
-      "radial-gradient(ellipse at center, black 0%, black 28%, transparent 78%)",
+    WebkitMaskImage: "radial-gradient(ellipse at center, black 0%, black 28%, transparent 78%)",
+    maskImage: "radial-gradient(ellipse at center, black 0%, black 28%, transparent 78%)",
   };
 
   const heroMask: React.CSSProperties = suppressHeroZone
@@ -34,10 +32,7 @@ export function AmbientBackdrop({ suppressHeroZone = false }: Props) {
     : {};
 
   return (
-    <div
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
-      style={heroMask}
-    >
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" style={heroMask}>
       {/* Top-left desk vignette — desktop only, pinned to gutter on ultrawide */}
       <motion.div
         style={{
@@ -50,7 +45,14 @@ export function AmbientBackdrop({ suppressHeroZone = false }: Props) {
         }}
         className={`absolute mix-blend-multiply opacity-[0.085] md:block ${suppressHeroZone ? "hidden lg:block" : "hidden md:block"}`}
       >
-        <img src={desk} alt="" className="h-full w-full object-cover" loading="lazy" width={800} height={600} />
+        <img
+          src={desk}
+          alt=""
+          className="h-full w-full object-cover"
+          loading="lazy"
+          width={800}
+          height={600}
+        />
       </motion.div>
 
       {/* Mid-right circuit vignette — lg+, pinned to right gutter */}
@@ -65,7 +67,14 @@ export function AmbientBackdrop({ suppressHeroZone = false }: Props) {
         }}
         className="absolute hidden mix-blend-multiply opacity-[0.075] lg:block"
       >
-        <img src={circuit} alt="" className="h-full w-full object-cover" loading="lazy" width={800} height={600} />
+        <img
+          src={circuit}
+          alt=""
+          className="h-full w-full object-cover"
+          loading="lazy"
+          width={800}
+          height={600}
+        />
       </motion.div>
 
       {/* Bottom-wide bokeh — always visible, ultra-faint */}
@@ -81,7 +90,14 @@ export function AmbientBackdrop({ suppressHeroZone = false }: Props) {
         }}
         className={`absolute mix-blend-multiply ${suppressHeroZone ? "opacity-[0.035]" : "opacity-[0.06]"}`}
       >
-        <img src={bokeh} alt="" className="h-full w-full object-cover" loading="lazy" width={1920} height={1080} />
+        <img
+          src={bokeh}
+          alt=""
+          className="h-full w-full object-cover"
+          loading="lazy"
+          width={1920}
+          height={1080}
+        />
       </motion.div>
 
       {/* Cream veils — guarantee top & bottom text bands stay readable */}

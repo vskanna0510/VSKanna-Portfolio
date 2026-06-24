@@ -6,10 +6,17 @@ export const Route = createFileRoute("/ai-lab")({
   head: () => ({
     meta: [
       { title: "AI Lab · V S Kanna" },
-      { name: "description", content: "ML projects plus a small interactive demo you can play with on the page." },
+      {
+        name: "description",
+        content: "ML projects plus a small interactive demo you can play with on the page.",
+      },
       { property: "og:title", content: "AI Lab · V S Kanna" },
       { property: "og:description", content: "AI and ML work, with an interactive demo." },
     ],
   }),
-  component: () => <SectionLayout><AILab /></SectionLayout>,
+  component: () => (
+    <SectionLayout>
+      <AILab />
+    </SectionLayout>
+  ),
 });

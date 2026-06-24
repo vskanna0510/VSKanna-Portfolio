@@ -29,8 +29,7 @@ export function NeuralTransitionFX() {
     if (!ctx) return;
 
     const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    const isMobile =
-      window.matchMedia?.("(pointer: coarse)").matches || window.innerWidth < 640;
+    const isMobile = window.matchMedia?.("(pointer: coarse)").matches || window.innerWidth < 640;
     const isMid = !isMobile && window.innerWidth < 1100;
 
     const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.75);
@@ -180,7 +179,7 @@ export function NeuralTransitionFX() {
       // Fog (one gradient per frame — necessary but cheap)
       const fog = ctx.createRadialGradient(cx, cy, 0, cx, cy, fogRadius);
       fog.addColorStop(0, `rgba(79,70,229,${0.22 * alpha})`);
-      fog.addColorStop(0.6, `rgba(249,115,22,${0.10 * alpha})`);
+      fog.addColorStop(0.6, `rgba(249,115,22,${0.1 * alpha})`);
       fog.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = fog;
       ctx.fillRect(0, 0, W, H);

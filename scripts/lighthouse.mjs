@@ -9,6 +9,7 @@
  *   node scripts/lighthouse.mjs --skip-build   # reuse existing dist + running preview
  */
 import { spawn } from "node:child_process";
+import { createServer } from "node:net";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,8 +18,7 @@ import * as chromeLauncher from "chrome-launcher";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const PORT = Number(process.env.LIGHTHOUSE_PORT ?? 4173);
-const URL = `http://localhost:${PORT}/`;
+const DEFAULT_PORT = Number(process.env.LIGHTHOUSE_PORT ?? 4173);
 const LH_DIR = join(ROOT, "lighthouse");
 const BASELINE_PATH = join(LH_DIR, "baseline.json");
 const LATEST_PATH = join(LH_DIR, "latest.json");
@@ -28,6 +28,25 @@ const updateBaseline = process.argv.includes("--update-baseline");
 const skipBuild = process.argv.includes("--skip-build");
 
 let previewProc = null;
+let PORT = DEFAULT_PORT;
+let URL = `http://localhost:${PORT}/`;
+
+function isPortFree(port) {
+  return new Promise((resolve) => {
+    const server = createServer();
+    server.once("error", () => resolve(false));
+    server.listen(port, "127.0.0.1", () => {
+      server.close(() => resolve(true));
+    });
+  });
+}
+
+async function findAvailablePort(start) {
+  for (let port = start; port < start + 20; port++) {
+    if (await isPortFree(port)) return port;
+  }
+  throw new Error(`No free port in range ${start}-${start + 19}`);
+}
 
 function run(cmd, args) {
   return new Promise((resolve, reject) => {
@@ -59,17 +78,59 @@ async function waitForServer(maxMs = 90_000) {
 
 function startPreview() {
   return new Promise((resolve, reject) => {
+    let settled = false;
+    const fail = (err) => {
+      if (settled) return;
+      settled = true;
+      reject(err);
+    };
+    const ok = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+
     previewProc = spawn("npm", ["run", "preview", "--", "--port", String(PORT), "--strictPort"], {
-      stdio: "inherit",
+      stdio: ["ignore", "pipe", "pipe"],
       shell: true,
       cwd: ROOT,
       env: process.env,
     });
-    previewProc.on("error", reject);
-    waitForServer()
-      .then(resolve)
-      .catch(reject);
+    previewProc.on("error", fail);
+
+    const onPreviewOutput = (chunk) => {
+      const msg = chunk.toString();
+      if (msg.includes("already in use") || msg.includes("Error:")) {
+        fail(new Error(msg.trim()));
+      }
+    };
+    previewProc.stderr?.on("data", onPreviewOutput);
+    previewProc.stdout?.on("data", onPreviewOutput);
+
+    previewProc.on("close", (code) => {
+      if (!settled && code !== 0 && code !== null) {
+        fail(new Error(`Preview exited with code ${code}`));
+      }
+    });
+
+    waitForServer().then(ok).catch(fail);
   });
+}
+
+async function startPreviewWithRetry() {
+  for (let attempt = 0; attempt < 8; attempt++) {
+    PORT = await findAvailablePort(DEFAULT_PORT + attempt);
+    URL = `http://localhost:${PORT}/`;
+    try {
+      await startPreview();
+      return;
+    } catch {
+      stopPreview();
+      if (attempt === 7) {
+        throw new Error(`Could not start preview after 8 attempts (from port ${DEFAULT_PORT})`);
+      }
+    }
+  }
 }
 
 function stopPreview() {
@@ -80,6 +141,7 @@ function stopPreview() {
 }
 
 async function runAudit(formFactor) {
+  const isMobile = formFactor === "mobile";
   const chrome = await chromeLauncher.launch({
     chromeFlags: ["--headless", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"],
   });
@@ -90,6 +152,13 @@ async function runAudit(formFactor) {
       onlyCategories: ["performance"],
       port: chrome.port,
       formFactor,
+      screenEmulation: {
+        mobile: isMobile,
+        width: isMobile ? 412 : 1350,
+        height: isMobile ? 823 : 940,
+        deviceScaleFactor: isMobile ? 2.625 : 1,
+        disabled: false,
+      },
     };
     const runnerResult = await lighthouse(URL, options);
     const audits = runnerResult?.lhr?.audits ?? {};
@@ -176,7 +245,9 @@ function checkRegression(baseline, latest) {
     if (metric === "cls" && d > threshold) {
       warnings.push(`${form} CLS regressed by ${d.toFixed(3)} (threshold ${threshold})`);
     } else if (metric !== "cls" && d > threshold) {
-      warnings.push(`${form} ${metric.toUpperCase()} regressed by ${Math.round(d)}ms (threshold ${threshold}ms)`);
+      warnings.push(
+        `${form} ${metric.toUpperCase()} regressed by ${Math.round(d)}ms (threshold ${threshold}ms)`,
+      );
     }
   }
   return warnings;
@@ -191,8 +262,9 @@ async function main() {
       await run("npm", ["run", "build"]);
     }
 
-    console.log(`\n▶ Starting preview on port ${PORT}…\n`);
-    await startPreview();
+    console.log("\n▶ Starting preview…\n");
+    await startPreviewWithRetry();
+    console.log(`✓ Preview ready at ${URL}\n`);
 
     console.log("\n▶ Running Lighthouse (mobile)…\n");
     const mobile = await runAudit("mobile");
@@ -231,7 +303,9 @@ async function main() {
 
     const warnings = checkRegression(baseline, latest);
     if (warnings.length > 0 && !updateBaseline) {
-      console.warn("⚠ Performance regressions detected:\n" + warnings.map((w) => `  - ${w}`).join("\n"));
+      console.warn(
+        "⚠ Performance regressions detected:\n" + warnings.map((w) => `  - ${w}`).join("\n"),
+      );
       if (process.env.CI) process.exitCode = 1;
     } else {
       console.log("✓ Lighthouse audit complete → lighthouse/report.md\n");

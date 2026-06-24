@@ -2,19 +2,44 @@ import { motion, useInView, useMotionValue, useSpring, useTransform, animate } f
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { Github, Star, GitFork, Flame, Activity, Users, BookOpen, ExternalLink } from "lucide-react";
+import {
+  Github,
+  Star,
+  GitFork,
+  Flame,
+  Activity,
+  Users,
+  BookOpen,
+  ExternalLink,
+  type LucideIcon,
+} from "lucide-react";
 import {
   getGithubProfile,
   getGithubRepos,
   getGithubLanguages,
   getGithubContributions,
+  type GHRepo,
 } from "@/lib/github.functions";
 
 const LANG_COLORS: Record<string, string> = {
-  JavaScript: "#F7DF1E", TypeScript: "#3178C6", Python: "#3776AB", Java: "#E76F00",
-  HTML: "#E34F26", CSS: "#1572B6", C: "#A8B9CC", "C++": "#00599C", PHP: "#777BB4",
-  Go: "#00ADD8", Rust: "#DEA584", Shell: "#89E051", Vue: "#41B883", Jupyter: "#DA5B0B",
-  R: "#198CE7", Dockerfile: "#384d54", Ruby: "#CC342D", Kotlin: "#A97BFF",
+  JavaScript: "#F7DF1E",
+  TypeScript: "#3178C6",
+  Python: "#3776AB",
+  Java: "#E76F00",
+  HTML: "#E34F26",
+  CSS: "#1572B6",
+  C: "#A8B9CC",
+  "C++": "#00599C",
+  PHP: "#777BB4",
+  Go: "#00ADD8",
+  Rust: "#DEA584",
+  Shell: "#89E051",
+  Vue: "#41B883",
+  Jupyter: "#DA5B0B",
+  R: "#198CE7",
+  Dockerfile: "#384d54",
+  Ruby: "#CC342D",
+  Kotlin: "#A97BFF",
 };
 const colorFor = (l: string) => LANG_COLORS[l] ?? "#4F46E5";
 
@@ -61,23 +86,36 @@ export function GitHubSection({ user }: { user: string }) {
     <section id="github" className="relative mx-auto max-w-7xl px-6 py-32">
       <div className="mb-14 max-w-3xl">
         <motion.div
-          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--coral)]/30 bg-[var(--coral)]/8 px-3 py-1 text-xs uppercase tracking-[0.2em] text-[var(--coral)]"
         >
           <Github className="h-3 w-3" /> From GitHub
         </motion.div>
         <motion.h2
-          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
           className="font-display text-4xl font-bold tracking-tight sm:text-5xl"
         >
           My <span className="text-gradient">GitHub</span>
         </motion.h2>
         <motion.p
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.25 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.25 }}
           className="mt-4 text-muted-foreground"
         >
           Live stats from{" "}
-          <a href={`https://github.com/${user}`} target="_blank" rel="noreferrer" className="text-[var(--coral)] underline-offset-4 hover:underline">
+          <a
+            href={`https://github.com/${user}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[var(--coral)] underline-offset-4 hover:underline"
+          >
             @{user}
           </a>
           — repos, contributions, and languages.
@@ -95,11 +133,16 @@ export function GitHubSection({ user }: { user: string }) {
 
       {/* Profile + magnetic stat cards */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         className="glass-strong relative mb-8 overflow-hidden rounded-3xl p-6 sm:p-8"
       >
         <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 animate-aurora rounded-full bg-[var(--coral)]/25 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-10 h-72 w-72 animate-aurora rounded-full bg-[var(--amber)]/20 blur-3xl" style={{ animationDelay: "3s" }} />
+        <div
+          className="pointer-events-none absolute -bottom-24 -left-10 h-72 w-72 animate-aurora rounded-full bg-[var(--amber)]/20 blur-3xl"
+          style={{ animationDelay: "3s" }}
+        />
         <div className="relative flex flex-col items-start gap-6 sm:flex-row sm:items-center">
           <motion.div
             initial={{ scale: 0, rotate: -90 }}
@@ -112,10 +155,16 @@ export function GitHubSection({ user }: { user: string }) {
               animate={{ rotate: 360 }}
               transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
               className="absolute inset-0 -m-1 rounded-full"
-              style={{ background: "conic-gradient(from 0deg, #4F46E5, #F97316, #8B7BD8, #4F46E5)" }}
+              style={{
+                background: "conic-gradient(from 0deg, #4F46E5, #F97316, #8B7BD8, #4F46E5)",
+              }}
             />
             {profile.data ? (
-              <img src={profile.data.avatar_url} alt={profile.data.login} className="relative h-24 w-24 rounded-full border-[3px] border-[var(--background)] object-cover" />
+              <img
+                src={profile.data.avatar_url}
+                alt={profile.data.login}
+                className="relative h-24 w-24 rounded-full border-[3px] border-[var(--background)] object-cover"
+              />
             ) : (
               <div className="relative h-24 w-24 rounded-full border-[3px] border-[var(--background)] bg-muted" />
             )}
@@ -130,26 +179,61 @@ export function GitHubSection({ user }: { user: string }) {
               className="flex items-center gap-2"
             >
               <h3 className="font-display text-2xl font-bold">{profile.data?.name ?? user}</h3>
-              <a href={`https://github.com/${user}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[var(--coral)]" data-cursor="hover">
+              <a
+                href={`https://github.com/${user}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-muted-foreground hover:text-[var(--coral)]"
+                data-cursor="hover"
+              >
                 <ExternalLink className="h-4 w-4" />
               </a>
             </motion.div>
             <p className="text-sm text-[var(--coral)]">@{profile.data?.login ?? user}</p>
-            {profile.data?.bio && <p className="mt-2 max-w-xl text-sm text-muted-foreground">{profile.data.bio}</p>}
+            {profile.data?.bio && (
+              <p className="mt-2 max-w-xl text-sm text-muted-foreground">{profile.data.bio}</p>
+            )}
           </div>
 
           <div className="grid w-full grid-cols-2 gap-3 sm:w-auto sm:grid-cols-4">
-            <MagneticStat icon={BookOpen} label="Repos" value={profile.data?.public_repos} color="#4F46E5" delay={0} />
-            <MagneticStat icon={Users} label="Followers" value={profile.data?.followers} color="#F97316" delay={0.08} />
-            <MagneticStat icon={Star} label="Stars" value={totalStars} color="#8B7BD8" delay={0.16} />
-            <MagneticStat icon={Flame} label="Streak" value={contrib.data?.currentStreak} color="#F97316" suffix="d" delay={0.24} />
+            <MagneticStat
+              icon={BookOpen}
+              label="Repos"
+              value={profile.data?.public_repos}
+              color="#4F46E5"
+              delay={0}
+            />
+            <MagneticStat
+              icon={Users}
+              label="Followers"
+              value={profile.data?.followers}
+              color="#F97316"
+              delay={0.08}
+            />
+            <MagneticStat
+              icon={Star}
+              label="Stars"
+              value={totalStars}
+              color="#8B7BD8"
+              delay={0.16}
+            />
+            <MagneticStat
+              icon={Flame}
+              label="Streak"
+              value={contrib.data?.currentStreak}
+              color="#F97316"
+              suffix="d"
+              delay={0.24}
+            />
           </div>
         </div>
       </motion.div>
 
       {/* Contribution graph */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         className="glass mb-8 overflow-hidden rounded-3xl p-6"
         whileHover={{ y: -4 }}
       >
@@ -158,10 +242,13 @@ export function GitHubSection({ user }: { user: string }) {
           <div className="font-mono text-xs text-muted-foreground">
             {contrib.data ? (
               <>
-                <CountUp value={contrib.data.total} className="text-[var(--coral)]" /> contributions ·{" "}
-                <span className="text-[var(--amber)]">{contrib.data.longestStreak}</span>d longest streak
+                <CountUp value={contrib.data.total} className="text-[var(--coral)]" /> contributions
+                · <span className="text-[var(--amber)]">{contrib.data.longestStreak}</span>d longest
+                streak
               </>
-            ) : "loading…"}
+            ) : (
+              "loading…"
+            )}
           </div>
         </div>
         <ContribGraph contrib={contrib.data} loading={contrib.isLoading} />
@@ -187,9 +274,10 @@ export function GitHubSection({ user }: { user: string }) {
         <div className="lg:col-span-3">
           <h3 className="mb-4 font-display text-lg font-semibold">Top repositories</h3>
           <div className="grid gap-4 sm:grid-cols-2">
-            {repos.isLoading && Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="glass h-40 animate-pulse rounded-2xl" />
-            ))}
+            {repos.isLoading &&
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="glass h-40 animate-pulse rounded-2xl" />
+              ))}
             {repos.data?.slice(0, 6).map((r, i) => (
               <MagneticRepoCard key={r.id} r={r} i={i} />
             ))}
@@ -199,33 +287,49 @@ export function GitHubSection({ user }: { user: string }) {
         {/* Languages + commit activity */}
         <div className="space-y-6 lg:col-span-2">
           <motion.div
-            initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             className="glass rounded-3xl p-6"
           >
             <h3 className="mb-4 font-display text-lg font-semibold">Top languages</h3>
             <div className="space-y-3">
-              {langs.isLoading && Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-6 animate-pulse rounded bg-white/5" />
-              ))}
+              {langs.isLoading &&
+                Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-6 animate-pulse rounded bg-white/5" />
+                ))}
               {langs.data?.slice(0, 6).map((l, i) => (
                 <motion.div
                   key={l.name}
-                  initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
                   transition={{ delay: i * 0.06 }}
                 >
                   <div className="mb-1 flex items-center justify-between text-xs">
                     <span className="inline-flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full" style={{ background: colorFor(l.name) }} />
+                      <span
+                        className="h-2.5 w-2.5 rounded-full"
+                        style={{ background: colorFor(l.name) }}
+                      />
                       {l.name}
                     </span>
                     <span className="font-mono text-muted-foreground">{l.pct.toFixed(1)}%</span>
                   </div>
                   <div className="relative h-2.5 overflow-hidden rounded-full bg-[rgba(30,27,27,0.06)]">
                     <motion.div
-                      initial={{ width: 0 }} whileInView={{ width: `${l.pct}%` }} viewport={{ once: true }}
-                      transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.1 + i * 0.06 }}
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${l.pct}%` }}
+                      viewport={{ once: true }}
+                      transition={{
+                        duration: 1.4,
+                        ease: [0.22, 1, 0.36, 1],
+                        delay: 0.1 + i * 0.06,
+                      }}
                       className="relative h-full rounded-full"
-                      style={{ background: `linear-gradient(90deg, ${colorFor(l.name)}, var(--amber))` }}
+                      style={{
+                        background: `linear-gradient(90deg, ${colorFor(l.name)}, var(--amber))`,
+                      }}
                     >
                       <span
                         className="absolute inset-0 animate-scan-line"
@@ -244,11 +348,15 @@ export function GitHubSection({ user }: { user: string }) {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             transition={{ delay: 0.15 }}
             className="glass rounded-3xl p-6"
           >
-            <h3 className="mb-4 font-display text-lg font-semibold">Commit activity · last 12 weeks</h3>
+            <h3 className="mb-4 font-display text-lg font-semibold">
+              Commit activity · last 12 weeks
+            </h3>
             <CommitActivity contrib={contrib.data} />
           </motion.div>
         </div>
@@ -266,7 +374,7 @@ function MagneticStat({
   suffix = "",
   delay = 0,
 }: {
-  icon: any;
+  icon: LucideIcon;
   label: string;
   value?: number;
   color: string;
@@ -309,8 +417,9 @@ function MagneticStat({
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
         style={{
           background: useTransform(
-            [glowX, glowY] as any,
-            ([gx, gy]: any) => `radial-gradient(160px circle at ${gx} ${gy}, ${color}33, transparent 70%)`,
+            [glowX, glowY],
+            ([gx, gy]) =>
+              `radial-gradient(160px circle at ${gx} ${gy}, ${color}33, transparent 70%)`,
           ),
         }}
         whileHover={{ opacity: 1 }}
@@ -336,7 +445,7 @@ function MagneticStat({
 }
 
 /* ---------- Magnetic repo card ---------- */
-function MagneticRepoCard({ r, i }: { r: any; i: number }) {
+function MagneticRepoCard({ r, i }: { r: GHRepo; i: number }) {
   const ref = useRef<HTMLAnchorElement>(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -380,29 +489,52 @@ function MagneticRepoCard({ r, i }: { r: any; i: number }) {
         className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         style={{ boxShadow: `inset 0 0 0 1px ${color}55, 0 20px 40px -20px ${color}66` }}
       />
-      <div className="relative flex items-start justify-between gap-2" style={{ transform: "translateZ(30px)" }}>
-        <div className="font-display text-base font-semibold text-foreground group-hover:text-[var(--coral)]">{r.name}</div>
+      <div
+        className="relative flex items-start justify-between gap-2"
+        style={{ transform: "translateZ(30px)" }}
+      >
+        <div className="font-display text-base font-semibold text-foreground group-hover:text-[var(--coral)]">
+          {r.name}
+        </div>
         <ExternalLink className="h-3.5 w-3.5 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </div>
-      <p className="relative mt-2 line-clamp-2 text-xs text-muted-foreground" style={{ transform: "translateZ(20px)" }}>
+      <p
+        className="relative mt-2 line-clamp-2 text-xs text-muted-foreground"
+        style={{ transform: "translateZ(20px)" }}
+      >
         {r.description ?? "No description provided."}
       </p>
-      <div className="relative mt-4 flex items-center gap-4 text-xs text-muted-foreground" style={{ transform: "translateZ(25px)" }}>
+      <div
+        className="relative mt-4 flex items-center gap-4 text-xs text-muted-foreground"
+        style={{ transform: "translateZ(25px)" }}
+      >
         {r.language && (
           <span className="inline-flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: color }} />
             {r.language}
           </span>
         )}
-        <span className="inline-flex items-center gap-1"><Star className="h-3 w-3" /> {r.stargazers_count}</span>
-        <span className="inline-flex items-center gap-1"><GitFork className="h-3 w-3" /> {r.forks_count}</span>
+        <span className="inline-flex items-center gap-1">
+          <Star className="h-3 w-3" /> {r.stargazers_count}
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <GitFork className="h-3 w-3" /> {r.forks_count}
+        </span>
       </div>
     </motion.a>
   );
 }
 
 /* ---------- Count-up ---------- */
-function CountUp({ value, suffix = "", className = "" }: { value: number; suffix?: string; className?: string }) {
+function CountUp({
+  value,
+  suffix = "",
+  className = "",
+}: {
+  value: number;
+  suffix?: string;
+  className?: string;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
   const [n, setN] = useState(0);
@@ -415,17 +547,35 @@ function CountUp({ value, suffix = "", className = "" }: { value: number; suffix
     });
     return () => controls.stop();
   }, [inView, value]);
-  return <span ref={ref} className={className}>{n.toLocaleString()}{suffix}</span>;
+  return (
+    <span ref={ref} className={className}>
+      {n.toLocaleString()}
+      {suffix}
+    </span>
+  );
 }
 
 /* ---------- Contribution graph ---------- */
-function ContribGraph({ contrib, loading }: { contrib?: import("@/lib/github.functions").ContribData; loading: boolean }) {
+function ContribGraph({
+  contrib,
+  loading,
+}: {
+  contrib?: import("@/lib/github.functions").ContribData;
+  loading: boolean;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-50px" });
-  const [hovered, setHovered] = useState<{ x: number; y: number; date: string; count: number } | null>(null);
+  const [hovered, setHovered] = useState<{
+    x: number;
+    y: number;
+    date: string;
+    count: number;
+  } | null>(null);
 
   if (loading || !contrib) {
-    return <div ref={ref} className="h-32 w-full animate-pulse rounded-xl bg-[rgba(30,27,27,0.05)]" />;
+    return (
+      <div ref={ref} className="h-32 w-full animate-pulse rounded-xl bg-[rgba(30,27,27,0.05)]" />
+    );
   }
   const weeks = contrib.weeks;
   const todayStr = new Date().toISOString().slice(0, 10);
@@ -455,7 +605,9 @@ function ContribGraph({ contrib, loading }: { contrib?: import("@/lib/github.fun
                   onMouseEnter={(e) => {
                     if (!day) return;
                     const t = e.currentTarget.getBoundingClientRect();
-                    const c = (e.currentTarget.parentElement?.parentElement?.parentElement as HTMLElement)?.getBoundingClientRect();
+                    const c = (
+                      e.currentTarget.parentElement?.parentElement?.parentElement as HTMLElement
+                    )?.getBoundingClientRect();
                     setHovered({
                       x: t.left - (c?.left ?? 0) + 6,
                       y: t.top - (c?.top ?? 0) - 8,
@@ -502,7 +654,10 @@ function CommitActivity({ contrib }: { contrib?: import("@/lib/github.functions"
   const H = 100;
   const stepX = W / Math.max(last12.length - 1, 1);
   const pts = last12.map((v, i) => ({ x: i * stepX, y: H - (v / max) * H * 0.92 - 4 }));
-  const path = pts.reduce((acc, p, i) => acc + (i === 0 ? `M ${p.x},${p.y}` : ` L ${p.x},${p.y}`), "");
+  const path = pts.reduce(
+    (acc, p, i) => acc + (i === 0 ? `M ${p.x},${p.y}` : ` L ${p.x},${p.y}`),
+    "",
+  );
   const area = path + ` L ${W},${H} L 0,${H} Z`;
 
   return (

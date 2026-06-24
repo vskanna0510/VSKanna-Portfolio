@@ -10,11 +10,7 @@ export function AnalyticsScripts() {
   return (
     <>
       {PLAUSIBLE_DOMAIN ? (
-        <script
-          defer
-          data-domain={PLAUSIBLE_DOMAIN}
-          src="https://plausible.io/js/script.js"
-        />
+        <script defer data-domain={PLAUSIBLE_DOMAIN} src="https://plausible.io/js/script.js" />
       ) : null}
       {UMAMI_WEBSITE_ID ? (
         <script defer src={UMAMI_SCRIPT_URL} data-website-id={UMAMI_WEBSITE_ID} />

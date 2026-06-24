@@ -76,7 +76,10 @@ export function AuroraModeToggle() {
               onClick={() => setMode(m)}
               style={{
                 cursor: "pointer",
-                border: mode === m ? "1px solid rgba(249,115,22,0.6)" : "1px solid rgba(255,255,255,0.12)",
+                border:
+                  mode === m
+                    ? "1px solid rgba(249,115,22,0.6)"
+                    : "1px solid rgba(255,255,255,0.12)",
                 borderRadius: 6,
                 padding: "4px 8px",
                 fontSize: 10,

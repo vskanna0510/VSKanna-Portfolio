@@ -17,27 +17,49 @@ const SAMPLE_LOGS = [
 
 function ConfidenceSparkline({ history }: { history: number[] }) {
   if (history.length < 2) return null;
-  const W = 200, H = 36;
-  const max = 1, min = 0;
+  const W = 200,
+    H = 36;
+  const max = 1,
+    min = 0;
   const step = W / (history.length - 1);
-  const d = history.map((v, i) => `${i === 0 ? "M" : "L"} ${i * step} ${H - ((v - min) / (max - min)) * H}`).join(" ");
+  const d = history
+    .map((v, i) => `${i === 0 ? "M" : "L"} ${i * step} ${H - ((v - min) / (max - min)) * H}`)
+    .join(" ");
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="h-9 w-full">
       <defs>
-        <linearGradient id="conf-grad" x1="0" x2="1"><stop offset="0" stopColor="#4F46E5" /><stop offset="1" stopColor="#F97316" /></linearGradient>
+        <linearGradient id="conf-grad" x1="0" x2="1">
+          <stop offset="0" stopColor="#4F46E5" />
+          <stop offset="1" stopColor="#F97316" />
+        </linearGradient>
       </defs>
       <path d={d} fill="none" stroke="url(#conf-grad)" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
 
-function Bar({ label, value, max, color, unit }: { label: string; value: number; max: number; color: string; unit?: string }) {
+function Bar({
+  label,
+  value,
+  max,
+  color,
+  unit,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  color: string;
+  unit?: string;
+}) {
   const pct = Math.min(100, (value / max) * 100);
   return (
     <div>
       <div className="mb-1 flex items-center justify-between font-mono text-[10px] uppercase tracking-wider">
         <span className="text-muted-foreground">{label}</span>
-        <span style={{ color }}>{value.toFixed(unit === "ms" ? 0 : 2)}{unit ?? ""}</span>
+        <span style={{ color }}>
+          {value.toFixed(unit === "ms" ? 0 : 2)}
+          {unit ?? ""}
+        </span>
       </div>
       <div className="h-1.5 overflow-hidden rounded-full bg-black/5">
         <div
@@ -68,9 +90,9 @@ export function AILabTelemetry({ activeLabel }: { activeLabel: string | null }) 
       setLogs((prev) => [...prev.slice(-7), `[t+${t}s] ${line}`]);
       setMetrics((m) => ({
         latency: clamp(m.latency + (Math.random() - 0.5) * 30, 80, 320),
-        tps:     clamp(m.tps + (Math.random() - 0.5) * 4, 4, 48),
-        gpu:     clamp(m.gpu + (Math.random() - 0.5) * 10, 20, 96),
-        loss:    clamp(m.loss + (Math.random() - 0.5) * 0.05, 0.05, 0.9),
+        tps: clamp(m.tps + (Math.random() - 0.5) * 4, 4, 48),
+        gpu: clamp(m.gpu + (Math.random() - 0.5) * 10, 20, 96),
+        loss: clamp(m.loss + (Math.random() - 0.5) * 0.05, 0.05, 0.9),
       }));
       setConfidence((c) => {
         const next = clamp((c[c.length - 1] ?? 0.7) + (Math.random() - 0.45) * 0.08, 0.2, 0.98);
@@ -80,7 +102,10 @@ export function AILabTelemetry({ activeLabel }: { activeLabel: string | null }) 
       timer = window.setTimeout(tick, 600 + Math.random() * 800);
     };
     let timer = window.setTimeout(tick, 400);
-    return () => { mounted = false; window.clearTimeout(timer); };
+    return () => {
+      mounted = false;
+      window.clearTimeout(timer);
+    };
   }, []);
 
   // Push activeLabel as log when changes
@@ -95,13 +120,17 @@ export function AILabTelemetry({ activeLabel }: { activeLabel: string | null }) 
   return (
     <div className="glass-strong flex h-full flex-col gap-4 rounded-2xl p-5">
       <div className="flex items-center justify-between">
-        <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Training log</div>
+        <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+          Training log
+        </div>
         <div className="flex items-center gap-1.5">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-600">live</span>
+          <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-600">
+            live
+          </span>
         </div>
       </div>
 
@@ -131,4 +160,6 @@ export function AILabTelemetry({ activeLabel }: { activeLabel: string | null }) 
   );
 }
 
-function clamp(n: number, min: number, max: number) { return Math.max(min, Math.min(max, n)); }
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}

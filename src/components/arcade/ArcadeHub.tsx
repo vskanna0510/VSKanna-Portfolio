@@ -14,11 +14,41 @@ import arcadeHero from "@/assets/arcade-hero-doodle.jpg";
 import arcadeHeroPortrait from "@/assets/arcade-hero-doodle-portrait.jpg";
 
 const GAMES = [
-  { id: "pong",     title: "Pixel Pong",   desc: "Classic Pong against the computer. First to 5 wins.", color: "#4F46E5", icon: "◐ ●  ◑" },
-  { id: "snake",    title: "Neural Snake", desc: "Eat tokens and grow. Speed picks up as you go.",          color: "#F97316", icon: "▪▪▪◆" },
-  { id: "catch",    title: "Code Catch",   desc: "Catch falling code symbols. Miss three and you lose.",   color: "#8B7BD8", icon: "{ } ; ()" },
-  { id: "breakout", title: "Breakout",     desc: "Break the bricks. Mouse or arrow keys.",                 color: "#FF6B6B", icon: "▰▰▰▰" },
-  { id: "2048",     title: "2048",         desc: "Merge tiles with the arrow keys. Try to beat your best.", color: "#FFB454", icon: "2·4·8" },
+  {
+    id: "pong",
+    title: "Pixel Pong",
+    desc: "Classic Pong against the computer. First to 5 wins.",
+    color: "#4F46E5",
+    icon: "◐ ●  ◑",
+  },
+  {
+    id: "snake",
+    title: "Neural Snake",
+    desc: "Eat tokens and grow. Speed picks up as you go.",
+    color: "#F97316",
+    icon: "▪▪▪◆",
+  },
+  {
+    id: "catch",
+    title: "Code Catch",
+    desc: "Catch falling code symbols. Miss three and you lose.",
+    color: "#8B7BD8",
+    icon: "{ } ; ()",
+  },
+  {
+    id: "breakout",
+    title: "Breakout",
+    desc: "Break the bricks. Mouse or arrow keys.",
+    color: "#FF6B6B",
+    icon: "▰▰▰▰",
+  },
+  {
+    id: "2048",
+    title: "2048",
+    desc: "Merge tiles with the arrow keys. Try to beat your best.",
+    color: "#FFB454",
+    icon: "2·4·8",
+  },
 ] as const;
 
 type GameId = (typeof GAMES)[number]["id"];
@@ -75,7 +105,10 @@ export function ArcadePage() {
             {/* drifting light sweep */}
             <motion.div
               className="pointer-events-none absolute inset-y-0 w-1/3"
-              style={{ background: "linear-gradient(90deg, transparent, rgba(255,180,84,0.18), transparent)" }}
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(255,180,84,0.18), transparent)",
+              }}
               animate={{ x: ["-30%", "330%"] }}
               transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
             />
@@ -134,7 +167,9 @@ export function ArcadePage() {
                 {/* coloured aura on hover */}
                 <div
                   className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                  style={{ background: `radial-gradient(circle at 30% 0%, ${g.color}44, transparent 60%)` }}
+                  style={{
+                    background: `radial-gradient(circle at 30% 0%, ${g.color}44, transparent 60%)`,
+                  }}
                 />
                 {/* animated border sheen */}
                 <motion.div
@@ -142,7 +177,8 @@ export function ArcadePage() {
                   style={{
                     background: `conic-gradient(from 0deg, transparent, ${g.color}55, transparent 30%)`,
                     mask: "linear-gradient(#000,#000) content-box, linear-gradient(#000,#000)",
-                    WebkitMask: "linear-gradient(#000,#000) content-box, linear-gradient(#000,#000)",
+                    WebkitMask:
+                      "linear-gradient(#000,#000) content-box, linear-gradient(#000,#000)",
                     WebkitMaskComposite: "xor",
                     maskComposite: "exclude",
                     padding: 1,
@@ -160,7 +196,12 @@ export function ArcadePage() {
                       className="font-mono text-5xl font-bold tracking-tighter"
                       style={{ color: g.color, textShadow: `0 0 24px ${g.color}99` }}
                       animate={{ y: [0, -4, 0], opacity: [0.75, 1, 0.75] }}
-                      transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}
+                      transition={{
+                        duration: 2.4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: i * 0.2,
+                      }}
                     >
                       {g.icon}
                     </motion.div>
@@ -174,7 +215,10 @@ export function ArcadePage() {
                     </motion.div>
                     <div className="crt-overlay absolute inset-0" />
                   </div>
-                  <div className="mb-1 font-mono text-[10px] uppercase tracking-wider" style={{ color: g.color }}>
+                  <div
+                    className="mb-1 font-mono text-[10px] uppercase tracking-wider"
+                    style={{ color: g.color }}
+                  >
                     game · {g.id}
                   </div>
                   <h3 className="font-display text-xl font-semibold">{g.title}</h3>

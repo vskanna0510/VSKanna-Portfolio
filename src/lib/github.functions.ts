@@ -52,15 +52,32 @@ function githubErrorMessage(status: number, hasToken: boolean): string {
 }
 
 export type GHProfile = {
-  login: string; name: string | null; avatar_url: string; bio: string | null;
-  followers: number; following: number; public_repos: number; html_url: string;
-  location: string | null; blog: string | null; company: string | null;
+  login: string;
+  name: string | null;
+  avatar_url: string;
+  bio: string | null;
+  followers: number;
+  following: number;
+  public_repos: number;
+  html_url: string;
+  location: string | null;
+  blog: string | null;
+  company: string | null;
   _error?: string | null;
 };
 export type GHRepo = {
-  id: number; name: string; full_name: string; html_url: string;
-  description: string | null; stargazers_count: number; forks_count: number;
-  language: string | null; topics: string[]; updated_at: string; fork: boolean; archived: boolean;
+  id: number;
+  name: string;
+  full_name: string;
+  html_url: string;
+  description: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  language: string | null;
+  topics: string[];
+  updated_at: string;
+  fork: boolean;
+  archived: boolean;
   homepage: string | null;
 };
 export type ContribDay = { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 };
@@ -75,16 +92,33 @@ export type ContribData = {
 type RepoListResult = { repos: GHRepo[]; error: string | null };
 
 function mapRepo(r: {
-  id: number; name: string; full_name: string; html_url: string;
-  description: string | null; stargazers_count: number; forks_count: number;
-  language: string | null; topics?: string[]; updated_at: string; fork: boolean; archived: boolean;
+  id: number;
+  name: string;
+  full_name: string;
+  html_url: string;
+  description: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  language: string | null;
+  topics?: string[];
+  updated_at: string;
+  fork: boolean;
+  archived: boolean;
   homepage: string | null;
 }): GHRepo {
   return {
-    id: r.id, name: r.name, full_name: r.full_name, html_url: r.html_url,
-    description: r.description, stargazers_count: r.stargazers_count,
-    forks_count: r.forks_count, language: r.language, topics: r.topics ?? [],
-    updated_at: r.updated_at, fork: r.fork, archived: r.archived,
+    id: r.id,
+    name: r.name,
+    full_name: r.full_name,
+    html_url: r.html_url,
+    description: r.description,
+    stargazers_count: r.stargazers_count,
+    forks_count: r.forks_count,
+    language: r.language,
+    topics: r.topics ?? [],
+    updated_at: r.updated_at,
+    fork: r.fork,
+    archived: r.archived,
     homepage: r.homepage,
   };
 }
@@ -97,7 +131,11 @@ async function fetchUserRepos(user: string): Promise<RepoListResult> {
     const repos = raw
       .filter((r) => !r.fork && !r.archived)
       .map(mapRepo)
-      .sort((a, b) => b.stargazers_count - a.stargazers_count || +new Date(b.updated_at) - +new Date(a.updated_at));
+      .sort(
+        (a, b) =>
+          b.stargazers_count - a.stargazers_count ||
+          +new Date(b.updated_at) - +new Date(a.updated_at),
+      );
     return { repos, error: null };
   } catch (e) {
     const status = e instanceof GitHubError ? e.status : 0;
@@ -127,11 +165,21 @@ export const getGithubProfile = createServerFn({ method: "GET" })
     if (hit && hit.expires > Date.now()) return hit.value as GHProfile & { _error: string | null };
 
     try {
-      const p = await gh<GHProfile>(`https://api.github.com/users/${encodeURIComponent(data.user)}`);
+      const p = await gh<GHProfile>(
+        `https://api.github.com/users/${encodeURIComponent(data.user)}`,
+      );
       const value = {
-        login: p.login, name: p.name, avatar_url: p.avatar_url, bio: p.bio,
-        followers: p.followers, following: p.following, public_repos: p.public_repos,
-        html_url: p.html_url, location: p.location, blog: p.blog, company: p.company,
+        login: p.login,
+        name: p.name,
+        avatar_url: p.avatar_url,
+        bio: p.bio,
+        followers: p.followers,
+        following: p.following,
+        public_repos: p.public_repos,
+        html_url: p.html_url,
+        location: p.location,
+        blog: p.blog,
+        company: p.company,
         _error: null as string | null,
       };
       cache.set(key, { value, expires: Date.now() + 10 * 60_000 });
@@ -139,10 +187,17 @@ export const getGithubProfile = createServerFn({ method: "GET" })
     } catch (e) {
       const status = e instanceof GitHubError ? e.status : 0;
       return {
-        login: data.user, name: data.user, avatar_url: `https://github.com/${data.user}.png`,
-        bio: null, followers: 0, following: 0, public_repos: 0,
+        login: data.user,
+        name: data.user,
+        avatar_url: `https://github.com/${data.user}.png`,
+        bio: null,
+        followers: 0,
+        following: 0,
+        public_repos: 0,
         html_url: `https://github.com/${data.user}`,
-        location: null, blog: null, company: null,
+        location: null,
+        blog: null,
+        company: null,
         _error: githubErrorMessage(status, Boolean(getGithubToken())),
       };
     }
@@ -170,7 +225,8 @@ export const getGithubLanguages = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const key = `langs:${data.user}`;
     const hit = cache.get(key);
-    if (hit && hit.expires > Date.now()) return hit.value as { name: string; bytes: number; pct: number }[];
+    if (hit && hit.expires > Date.now())
+      return hit.value as { name: string; bytes: number; pct: number }[];
 
     const repoKey = `repos:${data.user}`;
     let repos: GHRepo[] = [];
@@ -197,7 +253,13 @@ export const getGithubContributions = createServerFn({ method: "GET" })
   .validator(z.object({ user: z.string().min(1) }))
   .handler(async ({ data }) => {
     return cached(`contrib:${data.user}`, 30 * 60_000, async () => {
-      const empty: ContribData = { total: 0, weeks: [], longestStreak: 0, currentStreak: 0, bestDay: { date: "", count: 0 } };
+      const empty: ContribData = {
+        total: 0,
+        weeks: [],
+        longestStreak: 0,
+        currentStreak: 0,
+        bestDay: { date: "", count: 0 },
+      };
       try {
         const r = await fetch(
           `https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(data.user)}?y=last`,
@@ -212,20 +274,35 @@ export const getGithubContributions = createServerFn({ method: "GET" })
         let current: ContribDay[] = [];
         for (const d of days) {
           const dow = new Date(d.date).getUTCDay();
-          if (dow === 0 && current.length) { weeks.push(current); current = []; }
+          if (dow === 0 && current.length) {
+            weeks.push(current);
+            current = [];
+          }
           current.push(d);
         }
         if (current.length) weeks.push(current);
-        let longest = 0, cur = 0, running = 0;
+        let longest = 0,
+          cur = 0,
+          running = 0;
         for (const d of days) {
-          if (d.count > 0) { running++; longest = Math.max(longest, running); } else running = 0;
+          if (d.count > 0) {
+            running++;
+            longest = Math.max(longest, running);
+          } else running = 0;
         }
         for (let i = days.length - 1; i >= 0; i--) {
-          if (days[i].count > 0) cur++; else break;
+          if (days[i].count > 0) cur++;
+          else break;
         }
         const bestDay = days.reduce((a, b) => (b.count > a.count ? b : a), { date: "", count: 0 });
         const total = days.reduce((a, b) => a + b.count, 0);
-        return { total, weeks, longestStreak: longest, currentStreak: cur, bestDay: { date: bestDay.date, count: bestDay.count } } as ContribData;
+        return {
+          total,
+          weeks,
+          longestStreak: longest,
+          currentStreak: cur,
+          bestDay: { date: bestDay.date, count: bestDay.count },
+        } as ContribData;
       } catch (e) {
         console.warn("getGithubContributions failed:", e);
         return empty;

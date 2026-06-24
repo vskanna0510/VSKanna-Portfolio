@@ -93,12 +93,29 @@ export function WebVitalsHUD() {
           opacity: 0.9,
         }}
       >
-        <span style={{ width: 6, height: 6, borderRadius: 99, background: "#10b981", boxShadow: "0 0 6px #10b981" }} />
+        <span
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: 99,
+            background: "#10b981",
+            boxShadow: "0 0 6px #10b981",
+          }}
+        />
         WEB VITALS {open ? "▾" : "▸"}
       </div>
       {open && (
-        <div style={{ marginTop: 6, display: "grid", gridTemplateColumns: "auto 1fr auto", gap: "3px 10px" }}>
-          {entries.length === 0 && <div style={{ gridColumn: "1 / -1", opacity: 0.6 }}>collecting…</div>}
+        <div
+          style={{
+            marginTop: 6,
+            display: "grid",
+            gridTemplateColumns: "auto 1fr auto",
+            gap: "3px 10px",
+          }}
+        >
+          {entries.length === 0 && (
+            <div style={{ gridColumn: "1 / -1", opacity: 0.6 }}>collecting…</div>
+          )}
           {entries.map((m) => {
             const r = rate(m.name, m.value);
             return (
@@ -115,7 +132,15 @@ function Row({ name, value, color }: { name: string; value: string; color: strin
   return (
     <>
       <span style={{ opacity: 0.7 }}>{name}</span>
-      <span style={{ height: 4, alignSelf: "center", background: color, borderRadius: 2, opacity: 0.85 }} />
+      <span
+        style={{
+          height: 4,
+          alignSelf: "center",
+          background: color,
+          borderRadius: 2,
+          opacity: 0.85,
+        }}
+      />
       <span style={{ color, fontWeight: 600 }}>{value}</span>
     </>
   );
