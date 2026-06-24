@@ -11,7 +11,7 @@ import {
 import { GitHubSection } from "./GitHubSection";
 import { AnimatedPortrait } from "./AnimatedPortrait";
 import { AmbientBackdrop } from "./AmbientBackdrop";
-import { HeroAurora } from "./HeroAurora";
+import { HeroAurora, PortraitAurora } from "./HeroAurora";
 import { VoiceWelcome } from "./VoiceWelcome";
 import { SectionDivider } from "./SectionDivider";
 import { PageTransition } from "./PageTransition";
@@ -81,7 +81,7 @@ export function Hero() {
 
 
   return (
-    <section ref={ref} className="relative min-h-screen overflow-hidden">
+    <section ref={ref} className="relative min-h-screen overflow-x-hidden overflow-y-visible">
       <HeroAurora mode={auroraMode} />
       <motion.div style={{ y, opacity }} className="relative z-10 mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-8 px-6 pt-28 md:grid-cols-[1.1fr_1fr] md:gap-12 md:pt-24">
         {/* LEFT: text */}
@@ -148,7 +148,8 @@ export function Hero() {
         </div>
 
         {/* RIGHT: portrait */}
-        <div className="order-first md:order-last">
+        <div className="relative order-first overflow-visible md:order-last">
+          <PortraitAurora mode={auroraMode} />
           <AnimatedPortrait />
         </div>
       </motion.div>

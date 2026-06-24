@@ -55,6 +55,7 @@ export function GitHubSection({ user }: { user: string }) {
   });
 
   const totalStars = repos.data?.reduce((a, r) => a + r.stargazers_count, 0) ?? 0;
+  const apiError = profile.data?._error ?? null;
 
   return (
     <section id="github" className="relative mx-auto max-w-7xl px-6 py-32">
@@ -81,6 +82,15 @@ export function GitHubSection({ user }: { user: string }) {
           </a>
           — repos, contributions, and languages.
         </motion.p>
+        {apiError && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-4 rounded-xl border border-[var(--amber)]/30 bg-[var(--amber)]/8 px-4 py-3 text-sm text-muted-foreground"
+          >
+            {apiError}
+          </motion.p>
+        )}
       </div>
 
       {/* Profile + magnetic stat cards */}

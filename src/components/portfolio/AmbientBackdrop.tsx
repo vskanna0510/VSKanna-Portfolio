@@ -92,12 +92,13 @@ export function AmbientBackdrop({ suppressHeroZone = false }: Props) {
             "linear-gradient(180deg, var(--background) 0%, transparent 12%, transparent 88%, var(--background) 100%)",
         }}
       />
-      {/* Center-column reading veil (kicks in on narrow viewports) */}
+      {/* Center-column reading veil — lighter in hero when HeroAurora owns the top band */}
       <div
         className="absolute inset-0"
         style={{
-          background:
-            "radial-gradient(ellipse 70% 50% at 50% 45%, rgba(251,251,249,0.45) 0%, transparent 75%)",
+          background: suppressHeroZone
+            ? "radial-gradient(ellipse 70% 50% at 50% 45%, rgba(251,251,249,0.22) 0%, transparent 75%)"
+            : "radial-gradient(ellipse 70% 50% at 50% 45%, rgba(251,251,249,0.45) 0%, transparent 75%)",
         }}
       />
     </div>
